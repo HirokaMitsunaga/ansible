@@ -1,0 +1,24 @@
+- name: configure / Setup global configuration file
+  copy:
+    src: nginx.conf
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: 0644
+
+#- name: configure / configuration file
+
+- name: configure / Start nginx service
+  systemd:
+    name: nginx
+    state: reloaded
+    enabled: yes
+
+- name: configure / Wait for nginx restart
+  wait_for:
+    #host: "{{ansible_ens160.ipv4.address}}"
+    host: "{{ansible_eth0.ipv4.address}}" ##参考:https://bacchi.me/ansible/get-ipaddress/
+    port: "{{nginx_service_port}}"
+    delay: 3
+    timeout: 60
+

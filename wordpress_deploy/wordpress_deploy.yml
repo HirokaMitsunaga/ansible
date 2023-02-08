@@ -1,0 +1,16 @@
+- name: Depoy Database for WordPress
+  hosts: databases
+  become: true
+  roles:
+    - { role: common, tags: common} #OSの基本設定
+    - { role: mairadb, tags: mariadb} #DBの構築
+
+- name: Depoy Application for WordPress
+  hosts: apps
+  become: true
+  roles:
+    - {role: common, tags: common} #OSの基本設定
+    - {role: nginx, tags: nginx} #PHPの実行環境の構築
+    - {role: php-fpm, tags: php-fpm} 
+    - {role: wordpress, tags: wordpress} #WordPressの展開
+  

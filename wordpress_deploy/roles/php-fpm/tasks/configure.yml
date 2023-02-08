@@ -1,0 +1,19 @@
+- name: configure / Setup log directory
+  file:
+    path: /var/log/php-fpm
+    owner: "{{phpfpm_user}}"
+    group: "{{phpfpm_group}}"
+    mode: 0755
+    state: directory
+  
+- name: configure / Start php-fpm service
+  systemd:
+    name: php-fpm
+    state: restarted
+    enabled: yes
+
+#- name: configure / Wait for php-fpm restart
+#  wait_for:
+#    path: "{{phpfpm_unix_socket}}"
+#    delay: 2
+#    timeout: 60
