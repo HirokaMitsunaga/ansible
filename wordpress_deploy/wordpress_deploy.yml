@@ -10,7 +10,7 @@
   become: true
   roles:
     - {role: common, tags: common} #OSの基本設定
-    - {role: nginx, tags: nginx} #PHPの実行環境の構築
-    - {role: php-fpm, tags: php-fpm} 
+    - {role: nginx, tags: nginx} #nginxの構築
+    - {role: php-fpm, tags: php-fpm} #PHPの実行環境の構築
     - {role: wordpress, tags: wordpress} #WordPressの展開
   
