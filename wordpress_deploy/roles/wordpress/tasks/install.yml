@@ -14,7 +14,7 @@
 
 - name: install / Change ownership in WordPress
   file:
-    path: /srv/wordpress ##-{{wordpress_version}}
+    path: /srv/wordpress/ ##-{{wordpress_version}}
     owner: nginx
     group: nginx
     recurse: yes
