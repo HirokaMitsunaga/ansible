@@ -1,0 +1,4 @@
+- name: install / Download WordPress
+  yum:
+    name: git
+    state: present

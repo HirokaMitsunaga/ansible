@@ -1,0 +1,7 @@
+mariadb_root_user: root
+mariadb_root_pass: hogehoge
+
+mariadb_packges:
+  - mariadb-server
+  - MySQL-python
+

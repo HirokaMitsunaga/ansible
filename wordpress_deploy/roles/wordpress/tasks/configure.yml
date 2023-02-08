@@ -1,0 +1,27 @@
+- name: configure / Start mariadb service
+  systemd:
+    name: mariadb
+    state: started
+    enabled: yes
+
+- block:
+  - name: configure / Create WordPress database
+    mysql_db:
+      login_password: "{{mariadb_root_pass}}"
+      name: "{{wordpress_db_name}}"
+      state: present
+  
+  - name: configure / Create database user
+    mysql_user:
+      login_password: "{{mariadb_root_pass}}"
+      name: "{{wordpress_db_user}}"
+      password: "{{wordpress_db_password}}"
+      host: "{{ansible_eth0.ipv4.address}}"
+      priv: "{{wordpress_db_name}}.*:ALL"
+      state: present
+  
+  run_once: true
+  delegate_to: "{{hostvars.db1i.ansible_host}}"
+
+
+#- name: configure / Deploy WordPress config file

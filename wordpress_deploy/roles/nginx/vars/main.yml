@@ -1,0 +1,5 @@
+nginx_service_port: 80
+wordpress_doc_root: "/srv/wordpress"
+nginx_packages:
+  - nginx
+  - MySQL-python

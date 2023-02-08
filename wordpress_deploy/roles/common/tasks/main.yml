@@ -1,0 +1,39 @@
+---
+## SELinuxのモード変更
+## https://docs.ansible.com/ansible/latest/collections/ansible/posix/selinux_module.html
+## SELinuxについて参考:https://atmarkit.itmedia.co.jp/ait/articles/1808/16/news016.html
+#- name: configure / Selinux permmisived
+#  selinux:
+#    policy: targeted
+#    state: permissive
+#  when: ansible_selinux.config_mode == 'enforcing'
+#  ignore_errors: yes
+
+
+##IPv6のインターフェースの無効化
+##https://docs.ansible.com/ansible/latest/collections/ansible/posix/sysctl_module.html
+- name: configure / Selinux Disable ipv6 interface
+  sysctl:
+    state: present
+    name: "{{ item }}"
+    value: 1
+    sysctl_set: yes
+    reload: yes
+  with_items:
+      - net.ipv6.conf.all.disable_ipv6
+      - net.ipv6.conf.default.disable_ipv6
+
+##YUMパッケージのアップデート
+##https://docs.ansible.com/ansible/latest/collections/ansible/builtin/yum_repository_module.htmlss
+- name: configure / Update yum packages
+  yum:
+    name: '*'
+    state: latest
+    update_cache: yes
+
+##EPELリポジトリの設定
+- name: configure / Import EPEL Repository
+  shell: amazon-linux-extras install epel -y
+  become: true
+
+
