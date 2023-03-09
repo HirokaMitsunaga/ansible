@@ -1,0 +1,38 @@
+- hosts: remote-server
+  become: true
+
+  tasks:
+  - name: ホスト名の取得
+    shell: hostname
+    register: hostname
+
+  - name: 日付の取得
+    shell: date "+%Y%m%d"
+    register: date
+  
+  - name: ディレクトリ作成
+    file:
+     path: /tmp/disk_log_{{ hostname.stdout }}_{{ date.stdout }}
+     state: directory
+     owner: ec2-user
+     group: ec2-user
+     mode: 775
+
+  - name: S.M.A.R.T情報の収集
+    shell: smartctl -a -x /dev/xvda1 > /tmp/disk_log_{{ hostname.stdout }}_{{ date.stdout }}/smartctllog
+    #non-zero return codeが出るためignore_errorsをyesにした
+    ignore_errors: yes
+ 
+  - name: ディレクトリのzip化 
+    archive:
+     path: /tmp/disk_log_{{ hostname.stdout }}_{{ date.stdout }}
+     ##destがないとエラーが出る。
+     dest: /tmp/disk_log_{{ hostname.stdout }}_{{ date.stdout }}.zip
+     format: zip
+
+  - name: ファイルコピー
+    fetch:
+      src: /tmp/disk_log_{{ hostname.stdout }}_{{ date.stdout }}.zip
+      dest: /Users/mistasunagahiroka/ansible_test/
+      #dest以下にzipファイルをコピーするためflatはyes
+      flat: yes
