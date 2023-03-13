@@ -18,11 +18,23 @@
      group: ec2-user
      mode: 775
 
+  - name: 故障ディスクのディレクトリ名取得
+    shell: df |grep {{ failed_disk_mountpoint }} | awk '{print $1}'
+    ignore_errors: yes
+    register: failed_disk_directoryl
+
   - name: S.M.A.R.T情報の収集
-    shell: smartctl -a -x /dev/xvda1 > /tmp/disk_log_{{ hostname.stdout }}_{{ date.stdout }}/smartctllog
+    shell: smartctl -a -x {{ failed_disk_directoryl.stdout }} > /tmp/disk_log_{{ hostname.stdout }}_{{ date.stdout }}/smartctllog
     #non-zero return codeが出るためignore_errorsをyesにした
     ignore_errors: yes
- 
+
+  - name: シリアル番号の取得
+    shell: dmidecode -s system-serial-number
+    register: serial_number
+
+  - name: シリアル番号の出力
+    debug: var=serial_number.stdout
+
   - name: ディレクトリのzip化 
     archive:
      path: /tmp/disk_log_{{ hostname.stdout }}_{{ date.stdout }}

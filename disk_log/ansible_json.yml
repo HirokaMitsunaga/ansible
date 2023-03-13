@@ -1,0 +1,35 @@
+ - name: JsonQuery Playbook
+   hosts: localhost
+   tasks:
+#     - name: Download JSON content play
+#       uri:
+#         url: https://jsonplaceholder.typicode.com/users
+#         return_content: yes
+#       register: jsoncontent
+
+     - name: Download JSON content play
+       shell: cat jsoncontent.json
+       register: jsoncontent
+
+     - name: The Phonebook
+       debug: var=jsoncontent
+
+     - name: Collecting UserName and Mobile Number info
+       no_log: True
+       set_fact:
+        phonebook: "{{ jsoncontent.stdout | from_json | json_query(jmesquery) }}"
+       vars:
+        jmesquery: "[? address.street==`Kulas Light`].{Name: name, Email: email, Phone: phone, CompanyName: company.name, WebSite: website, City: address.city}"
+
+#     - name: Collecting UserName and Mobile Number info
+#       no_log: True
+#       set_fact:
+#         phonebook: "{{phonebook|default({}) | combine ( {item.address.street : item.*.street}) }}"
+#       with_items: "{{ jsoncontent.json | json_query('[*]')}}"
+
+     - name: The Phonebook
+       debug: var=phonebook
+
+
+
+  
